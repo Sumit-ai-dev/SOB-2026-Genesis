@@ -3,7 +3,7 @@ name: Verify Submissions
 on:
   pull_request:
     paths:
-      - 'participants/**'
+      - 'submission/**'
 
 jobs:
   verify:

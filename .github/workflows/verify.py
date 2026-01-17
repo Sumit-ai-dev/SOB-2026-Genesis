@@ -63,7 +63,7 @@ def verify_student_submission(file_path):
     return True
 
 if __name__ == "__main__":
-    participants_dir = "participants"
+    participants_dir = "submission"
     if not os.path.exists(participants_dir):
         print(f"Error: Directory '{participants_dir}' not found.")
         sys.exit(1)

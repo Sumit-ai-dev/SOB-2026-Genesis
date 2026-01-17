@@ -1,40 +1,75 @@
 # SOB-2026-Genesis
 
-## The Assignment: "The Proof of Identity PR"
+**The Genesis Assignment: Proof of Identity**
 
-Welcome to the School of Bitcoin 2026 Genesis assignment!
+This assignment tests your ability to generate cryptographic keys, sign messages, and submit a proof via a GitHub Pull Request.
 
-### Objective
-Prove that you have successfully generated a keypair and understand the Git workflow.
+## Objective
+Prove that you possess a valid Secp256k1 keypair by digitally signing your GitHub handle. This confirms your identity without revealing your private key.
 
-### Instructions
+## Instructions
 
-1.  **Fork & Clone**: Fork this `SOB-2026-Genesis` repository and clone it to your local machine.
+### 1. Fork & Clone
+Fork this repository and clone it to your machine:
+```bash
+git clone https://github.com/[your-username]/SOB-2026-Genesis.git
+cd SOB-2026-Genesis
+```
 
-2.  **Generate Keys**: Write a script in **Python or TypeScript** to:
-    *   Generate a random 256-bit Private Key.
-    *   Derive the Secp256k1 Public Key.
-    *   **Sign** the message: `"SOB-2026-[GitHub-Handle]"` (UTF-8 encoded).
+### 2. The Challenge
+Write a script (in **Python** or **TypeScript**) to:
+1.  Generate a random **Secp256k1** keypair.
+2.  **Sign** the following message with your Private Key:
+    "SOB-2026-[Your-Exact-GitHub-Handle]"
+3.  Output your **Public Key** and the **Signature**.
 
-3.  **Submit**: Create a file `participants/[your-handle].json` with the following content:
+**Note**: Do not use high-level "wallet" libraries (like `bitcoinlib` or `ethers.js`). Use lower-level cryptographic libraries (e.g., `ecdsa` / `hashlib` for Python, `elliptic` / `crypto` for Node) to show you understand the primitives.
 
-    ```json
-    {
-      "handle": "your-github-username",
-      "public_key": "the_hex_of_your_pubkey",
-      "signature": "the_hex_of_your_signature"
-    }
-    ```
+### 3. The Submission
+Create a new file in the `submission/` directory named `[your-handle].json`.
 
-    *   **handle**: Your exact GitHub username.
-    *   **public_key**: The hexadecimal representation of your public key.
-    *   **signature**: The hexadecimal representation of your DER-encoded signature (or simplified concatenation if using a library that supports it, but standard DER is safest for cross-language).
+**Path**: `submission/yogendra-17.json` (example)
 
-4.  **The PR**: Commit your file and submit a Pull Request to this repository.
+**Content**:
+```json
+{
+  "handle": "your-github-username",
+  "public_key": "your_public_key_hex",
+  "signature": "your_signature_hex"
+}
+```
+*   `handle`: Your exact GitHub username (case-sensitive).
+*   `public_key`: Hex verification key (compressed or uncompressed).
+*   `signature`: Hex DER-encoded signature (SHA-256 hash of the message).
 
-### Verification
-A "Gatekeeper" script will automatically run on your PR. It checks:
-*   If your Public Key is valid.
-*   If your **Signature** successfully verifies the message `"SOB-2026-[handle]"` against your Public Key.
+### 4. Verify Locally
+Before pushing, verify your submission works.
 
-Good luck!
+**Setup**:
+```bash
+# Set up a virtual env (if you haven't already)
+python3 -m venv venv
+source venv/bin/activate
+pip install ecdsa
+```
+
+**Run Verification**:
+```bash
+python .github/workflows/verify.py
+```
+If you see `SUCCESS`, you are ready.
+
+### 5. Submit PR
+Commit your changes and push to your fork:
+```bash
+git add submission/
+git commit -m "feat: Submission for [your-handle]"
+git push origin main
+```
+Open a Pull Request to the main repository. The automation will check your work.
+
+## Validation Details
+We use a Python script (`verify.py`) to cryptographically prove your submission:
+1.  It reads your `handle`, `public_key`, and `signature`.
+2.  It reconstructs the challenge message: `"SOB-2026-[handle]"`.
+3.  It uses `ecdsa` to verify that `signature` corresponds to that message and your `public_key`.
